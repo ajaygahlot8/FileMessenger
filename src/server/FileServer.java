@@ -12,22 +12,17 @@ public class FileServer extends Thread {
 	public static final int PORT = 9999;
 	ServerSocket serverSocket;
 
-	public FileServer() {
-
-		try {
-			serverSocket = new ServerSocket(PORT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public FileServer() throws IOException {
+		serverSocket = new ServerSocket(PORT);
 	}
 
 	public void run() {
+		Socket clientSocket;
 		while (true) {
-			Socket clientSocket;
 			try {
-				System.out.println("waiting for connection" + serverSocket.getLocalPort());
+				System.out.println("waiting for connection on port " + serverSocket.getLocalPort());
 				clientSocket = serverSocket.accept();
-				System.out.println("connected to " + clientSocket);
+				System.out.println("connected to " + clientSocket.getInetAddress());
 				saveFile(clientSocket);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -35,25 +30,25 @@ public class FileServer extends Thread {
 		}
 	}
 
-	private void saveFile(Socket clientSocket) throws IOException {
+	private void saveFile(Socket clientSocket) throws IOException  {
 		InputStream inputStream = clientSocket.getInputStream();
-		DataInputStream dataInputStream = new DataInputStream(inputStream);
-		FileOutputStream fileOutputStream = new FileOutputStream("temp.zip");
 
-		byte[] buffer = new byte[4096];
-		int read = 0;
-		int totalRead = 0;
+		try (DataInputStream dataInputStream = new DataInputStream(inputStream);
+				FileOutputStream fileOutputStream = new FileOutputStream("temp.zip")) {
+			byte[] buffer = new byte[4096];
+			int read = 0;
+			int totalRead = 0;
 
-		while ((read = dataInputStream.read(buffer, 0, buffer.length)) > 0) {
+			while ((read = dataInputStream.read(buffer, 0, buffer.length)) > 0) {
 
-			totalRead += read;
-			System.out.println("read " + totalRead + " bytes.");
-			fileOutputStream.write(buffer, 0, read);
+				totalRead += read;
+				System.out.println("read " + totalRead + " bytes.");
+				fileOutputStream.write(buffer, 0, read);
 
+			}
+
+			System.out.println("Transfer complete!!");
 		}
-
-		fileOutputStream.close();
-		dataInputStream.close();
 	}
 
 	public static void main(String args[]) throws IOException {

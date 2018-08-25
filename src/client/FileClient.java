@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class ClientSocket {
+public class FileClient {
 
 	Socket socket;
 
-	public ClientSocket(String ipAddress, int port, String fileName) throws UnknownHostException, IOException {
+	public FileClient(String ipAddress, int port, String fileName) throws UnknownHostException, IOException {
 		socket = new Socket(ipAddress, port);
 		sendFile(fileName);
 	}
@@ -25,6 +25,7 @@ public class ClientSocket {
 				System.out.println("sending data " + read);
 				dataOutputStream.write(buffer, 0, read);
 			}
+			System.out.println("File Transfer complete");
 		}
 
 	}
@@ -35,7 +36,7 @@ public class ClientSocket {
 		int port = Integer.parseInt(args[1]);
 		String fileName = args[2];
 
-		new ClientSocket(ipAddress, port, fileName);
+		new FileClient(ipAddress, port, fileName);
 
 	}
 
