@@ -27,7 +27,6 @@ public class FileClient {
 			}
 			System.out.println("File Transfer complete");
 		}
-
 	}
 
 	public static void main(String args[]) throws UnknownHostException, IOException {
